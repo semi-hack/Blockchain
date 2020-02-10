@@ -1,0 +1,26 @@
+{
+  "name": "njs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": " jest --watchALL"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/joi": "^17.1.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "mailgun-js": "^0.22.0",
+    "mongodb": "^3.5.2",
+    "mongoose": "^5.8.11",
+    "nodemailer": "^6.4.2",
+    "passport": "^0.4.1",
+    "qrcode": "^1.4.4"
+  },
+  "devDependencies": {
+    "jest": "^25.1.0"
+  }
+}
