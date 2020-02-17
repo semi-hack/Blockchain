@@ -2,10 +2,13 @@ const Blockchain = require('./blockchain');
 const Block = require('./block');
 
 describe('Blockchain', () => {
-    let blockchain = new Blockchain();
+    let blockchain, newChain, originalChain;
 
     beforeEach(() => {
         blockchain = new Blockchain();
+        newChain = new Blockchain();
+
+        originalChain = blockchain.chain;
     });
 
     it('contains a `chain` array instance', () => {
@@ -23,12 +26,12 @@ describe('Blockchain', () => {
         expect(blockchain.chain[blockchain.chain.length-1].data).toEqual(newData);
     });
 
-    describe('isValid chain', () => {
+    describe('isValidChain()', () => {
         describe('When the chain does not start with a genesis Block', () => {
             it('it returns false', () => {
                 blockchain.chain[0] = { data: 'fake-genesis'}
 
-                expect(Blockchain.isValidchain(blockchain.chain)).toBe(false);
+                expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
 
             });
         });
@@ -47,7 +50,7 @@ describe('Blockchain', () => {
 
                     blockchain.chain[2].lasthash = 'broken-lastHash'
 
-                    expect(Blockchain.isValidchain(blockchain.chain)).toBe(false);
+                    expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
                 });
 
             });
@@ -56,17 +59,81 @@ describe('Blockchain', () => {
                 it('returns false', () => {
                     blockchain.chain[2].data = 'bad data';
 
-                    expect(Blockchain.isValidchain(blockchain.chain)).toBe(false);
+                    expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
                 });
-            })
+            });
 
-            describe('and the chain is fine', () => {
-                it('returns true', () => {
-                    expect(Blockchain.isValidchain(blockchain.chain)).toBe(true);
-                });
+            // describe('and the chain does not contain any invalid block', () => {
+            //     it('returns true', () => {
 
+            //         expect(Blockchain.isValidchain(blockchain.chain)).toBe(true);
+            //     });
+
+            // });
+        });
+    });
+
+    describe('replaceChain()', () => {
+        let errorMock, LogMock
+
+        beforeEach(() => {
+            errorMock = jest.fn();
+            LogMock = jest.fn();
+
+            global.console.error = errorMock;
+            global.console.log = LogMock;
+        });
+        
+        describe('when the new chain is not longer', () => {
+            beforeEach(() => {
+                newChain.chain[0] = { new: 'chain' };
+        
+                blockchain.replaceChain(newChain.chain);
+            });
+
+            it('does not replace the chain', () => {
+                expect(blockchain.chain).toEqual(originalChain);
+            });
+
+            it('logs an error', () => {
+                expect(errorMock).toHaveBeenCalled();
             });
         });
+
+        describe('when the new chain is longer', () => {
+            beforeEach(() => {
+                newChain.addBlock({ data : 'one' });
+                newChain.addBlock({ data : 'two' });
+                newChain.addBlock({ data: 'three'});
+            });
+
+            describe('and the chain is invalid', () => {
+                beforeEach(() => {
+                    newChain.chain[2].hash = 'some-faske-hash';
+
+                    blockchain.replaceChain(newChain.chain);
+                });
+
+                it('does not replace the chain', () => {
+                    expect(blockchain.chain).toEqual(originalChain);
+                });
+
+                it('logs an error', () => {
+                    expect(errorMock).toHaveBeenCalled();
+                });
+            });
+
+            // describe('and the chain is valid', () => {
+            //     it('replaces the chain', () => {
+                    
+            //         blockchain.replaceChain(newChain.chain);
+
+            //         expect(blockchain.chain).toEqual(newChain.chain);
+            //     });
+
+            // });
+        });
+
     });
 
 });
