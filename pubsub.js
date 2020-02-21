@@ -12,7 +12,7 @@ class pubSub {
         this.publisher = redis.createClient();
         this.subscriber = redis.createClient();
 
-        this.subscriber.subscribeToChannels();
+        this.subscribeToChannels();
 
         this.subscriber.on('message', (channel, message) => this.handleMessage(channel, message));
     }
@@ -32,6 +32,7 @@ class pubSub {
             this.subscriber.subscribe(channel);
         });
     }
+
 
     publish({ channel, message}) {
         this.publisher.publish(channel, message);
