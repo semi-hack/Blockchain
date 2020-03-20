@@ -6,7 +6,7 @@ blockchain.addBlock({ data: 'initial' });
 
 console.log('first Block', blockchain.chain[blockchain.chain.length-1]);
 
-let prevTimestamp, nextTimestamp, nextBlock, timediff, average;
+let prevTimestamp, nextTimestamp, nextBlock, timeDiff, average;
 
 const times = [];
 
